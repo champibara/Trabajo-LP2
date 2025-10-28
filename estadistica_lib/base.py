@@ -41,9 +41,9 @@ class EstadisticaBase:
         """Devuelve el número de observaciones no nulas."""
         return self._n_observaciones
 
-#------------------------------------------------------------
+#-------------------------------------------------------------
 # Métodos Estadísticos
-#------------------------------------------------------------
+#-------------------------------------------------------------
 
     def contar_datos(self):
         """Devuelve la cantidad total de datos (incluyendo valores nulos si existen)."""
@@ -96,3 +96,4 @@ class EstadisticaBase:
         
         modas = [k for k, v in frecuencias.items() if v == max_freq]
         return modas if len(modas) > 1 else modas[0]
+
