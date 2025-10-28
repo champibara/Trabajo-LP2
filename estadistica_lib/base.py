@@ -113,3 +113,24 @@ class EstadisticaBase:
         """Calcula la desviación estándar a partir de la varianza."""
         var = self.varianza()
         return np.sqrt(var)
+
+    def rango(self):
+        """Calcula el rango (diferencia entre el valor máximo y el mínimo)."""
+        n = self.obtener_n_observaciones()
+        if n == 0:
+            return float('nan')
+        datos_validos = self.datos.dropna()
+        return datos_validos.max() - datos_validos.min()
+        
+    def coeficiente_variacion(self):
+        """Calcula el Coeficiente de Variación de Pearson (en %)."""
+        media = self.media()
+        desv_est = self.desviacion_estandar()
+
+        if np.isnan(media) or np.isnan(desv_est):
+            return float('nan')
+        
+        if media == 0:
+            return 0.0 if desv_est == 0 else float('inf')
+            
+        return (desv_est / media) * 100
