@@ -18,9 +18,9 @@ class MedidasCuantitativas(EstadisticaBase):
         """
         super().__init__(datos)  # Hereda métodos y atributos de la clase base
 
-    # ---------------------------------------------------------
-    #                      MEDIDAS DE POSICIÓN
-    # ---------------------------------------------------------
+# ---------------------------------------------------------
+# Medidas de posición
+# ---------------------------------------------------------
     def cuartiles(self):
         """
         Calcula los cuartiles Q1, Q2 (mediana) y Q3 de los datos.
@@ -76,9 +76,9 @@ class MedidasCuantitativas(EstadisticaBase):
         # Interpolación lineal entre los valores vecinos
         return datos_ordenados[f] + (k - f) * (datos_ordenados[c] - datos_ordenados[f])
 
-    # ---------------------------------------------------------
-    # Distribución 
-    #----------------------------------------------------------
+# -----------------------------------------------------------
+# Distribución 
+#------------------------------------------------------------
     
     def normal(self, x):
         """
@@ -129,4 +129,31 @@ class MedidasCuantitativas(EstadisticaBase):
             raise ValueError("No se puede calcular el puntaje Z: la desviación estándar es cero.")
 
         return (x - mu) / sigma
+
+#---------------------------------------------------------------
+# Resumen general
+#---------------------------------------------------------------
+
+    def resumen_estadistico(self):
+        """
+        Genera un resumen estadístico general con las principales medidas descriptivas.
+        
+        Retorna:
+            dict: Diccionario con medidas como media, mediana, moda, varianza, 
+            desviación estándar, rango y coeficiente de variación.
+        """
+        # Verifica que existan datos
+        if not self.datos or self.contar_datos() == 0:
+            raise ValueError("No se puede generar un resumen estadístico: no hay datos disponibles.")
+
+        return {
+            "Cantidad de datos (n)": self.contar_datos(),
+            "Media": round(self.media(), 2),
+            "Mediana": round(self.mediana(), 2),
+            "Moda": self.moda(),
+            "Varianza": round(self.varianza(), 2),
+            "Desviación estándar": round(self.desviacion_estandar(), 2),
+            "Rango": round(self.rango(), 2),
+            "Coeficiente de variación (%)": round(self.coeficiente_variacion(), 2)
+        }
 
