@@ -6,7 +6,7 @@ class EstadisticaBase:
     Clase base para operaciones estadísticas genéricas.
     Las clases hijas (como DatosCualitativos) heredan de esta.
     """
-    def _init_(self, datos):
+    def __init__(self, datos):
         self.datos = pd.Series(datos)
 
     def obtener_n_observaciones(self):
@@ -20,7 +20,7 @@ class DatosCualitativos(EstadisticaBase):
     Hereda de EstadisticaBase y aplica Polimorfismo.
     """
 
-    def _init_(self, ruta_archivo, columna, separador=';'):
+    def __init__(self, ruta_archivo, columna, separador=';'):
         """
         Inicializa la clase leyendo el archivo CSV y seleccionando la columna.
 
@@ -43,7 +43,7 @@ class DatosCualitativos(EstadisticaBase):
             raise ValueError(f"La columna '{columna}' no existe en el archivo.")
 
         # Inicializa clase base con la columna seleccionada
-        super()._init_(df[columna].astype(str))
+        super().__init__(df[columna].astype(str))
 
         # Convertir los datos a tipo categórico
         self.datos = self.datos.astype("category")
@@ -86,7 +86,7 @@ class DatosCualitativos(EstadisticaBase):
 # ---------------------------------------------------------------
 # Ejemplo de uso
 # ---------------------------------------------------------------
-if _name_ == "_main_":
+if __name__ == "__main__":
     archivo = "Alumnos Matriculados 2025-II-UNALM.csv"   # archivo CSV cargado
     columna = "CURSO"   # 👈 Nombre exacto de la columna en el CSV
 
