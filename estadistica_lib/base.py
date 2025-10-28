@@ -40,3 +40,18 @@ class EstadisticaBase:
     def obtener_n_observaciones(self):
         """Devuelve el número de observaciones no nulas."""
         return self._n_observaciones
+
+------------------------------------------------------------
+# Métodos Estadísticos
+------------------------------------------------------------
+
+    def contar_datos(self):
+        """Devuelve la cantidad total de datos (incluyendo valores nulos si existen)."""
+        return len(self.datos)
+
+    def suma(self):
+        """Calcula la suma total de los datos sin usar funciones integradas de Python."""
+        total = 0
+        for valor in self.datos.dropna():
+            total += valor
+        return total
