@@ -46,28 +46,32 @@ class DatosCualitativos(EstadisticaBase):
         modas = self._datos.mode().tolist()
         return modas[0] if len(modas) == 1 else modas
 
-    def tabla_frecuencia(self):
-        """
-        Genera una tabla con frecuencias absoluta, relativa y acumulada.
-        Returns:
-            DataFrame: Tabla de frecuencias.
-        """
-        fa = self._datos.value_counts(dropna=True)
-        fr = self._datos.value_counts(normalize=True, dropna=True).round(4)
+def tabla_frecuencia(self, ruta_guardado="tablas/tabla_frecuencias.csv"):
+    """
+    Genera una tabla con frecuencias absoluta, relativa y acumulada.
+    Guarda la tabla como archivo CSV en la carpeta 'tablas'.
+    """
+    fa = self._datos.value_counts(dropna=True)
+    fr = self._datos.value_counts(normalize=True, dropna=True).round(4)
 
-        faa = fa.cumsum()
-        fra = fr.cumsum().round(4)
+    faa = fa.cumsum()
+    fra = fr.cumsum().round(4)
 
-        tabla = pd.DataFrame({
-            "Frecuencia_Absoluta": fa,
-            "Frecuencia_Relativa (%)": fr * 100,
-            "Frecuencia_Absoluta_Acumulada": faa,
-            "Frecuencia_Relativa_Acumulada (%)": fra * 100
-        })
+    tabla = pd.DataFrame({
+        "Frecuencia_Absoluta": fa,
+        "Frecuencia_Relativa (%)": fr * 100,
+        "Frecuencia_Absoluta_Acumulada": faa,
+        "Frecuencia_Relativa_Acumulada (%)": fra * 100
+    })
 
-        tabla.index.name = self._nombre_columna
-        tabla.reset_index(inplace=True)
-        return tabla
+    tabla.index.name = self._nombre_columna
+    tabla.reset_index(inplace=True)
+    
+    # Guardar como archivo CSV en la carpeta 'tablas'
+    tabla.to_csv(ruta_guardado, index=False)
+    print(f"Tabla de frecuencias guardada en: {ruta_guardado}")
+    
+    return tabla
 
     # -------------------------------------------------------------
     # Polimorfismo: redefinición de resumen()
