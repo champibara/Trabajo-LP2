@@ -60,9 +60,9 @@ class DatosCualitativos(EstadisticaBase):
 
         tabla = pd.DataFrame({
             "Frecuencia_Absoluta": fa,
-            "Frecuencia_Relativa": fr * 100,
+            "Frecuencia_Relativa (%)": fr * 100,
             "Frecuencia_Absoluta_Acumulada": faa,
-            "Frecuencia_Relativa_Acumulada": fra * 100
+            "Frecuencia_Relativa_Acumulada (%)": fra * 100
         })
 
         tabla.index.name = self._nombre_columna
