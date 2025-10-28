@@ -146,14 +146,4 @@ class EstadisticaBase:
         }
 
 
-# -------------------------------------------------------------
-# Ejemplo de uso
-# -------------------------------------------------------------
 
-#if __name__ == "__main__":
-#    datos = [5, 8, 12, 5, 7, 9, 8, 10, 5]
-#    analisis = EstadisticaBase(datos)
-    
-#    print("---- RESUMEN ESTADÍSTICO ----")
-#    for k, v in analisis.resumen().items():
-#        print(f"{k}: {v}")
