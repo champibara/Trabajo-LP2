@@ -130,6 +130,39 @@ class MedidasCuantitativas(EstadisticaBase):
 
         return (x - mu) / sigma
 
+  def tabla_estadisticas(self, percentiles=[25, 50, 75], ruta_guardado="tablas/tabla_estadisticas.csv"):
+    """
+    Crea una tabla con las principales medidas estadísticas cuantitativas.
+    Incluye media, mediana, cuartiles, desviación estándar, y percentiles.
+    Guarda la tabla como archivo CSV en la carpeta 'tablas'.
+    """
+    cuartiles = self.cuartiles()
+    percentiles_values = {f"P{p}": self.percentil(p) for p in percentiles}
+    
+    # Datos de las estadísticas cuantitativas
+    datos_estadisticos = {
+        "Media": self.media(),
+        "Mediana": self.mediana(),
+        "Q1": cuartiles["Q1"],
+        "Q2 (Mediana)": cuartiles["Q2"],
+        "Q3": cuartiles["Q3"],
+        "Desviación Estándar": self.desviacion_estandar(),
+        **percentiles_values
+    }
+    
+    # Convertir a DataFrame para mostrar como tabla
+    df_estadisticas = pd.DataFrame(list(datos_estadisticos.items()), columns=["Estadística", "Valor"])
+    
+    # Guardar como archivo CSV en la carpeta 'tablas'
+    df_estadisticas.to_csv(ruta_guardado, index=False)
+    print(f"Tabla de estadísticas cuantitativas guardada en: {ruta_guardado}")
+    
+    return df_estadisticas
+
+
+
+
+    
 #---------------------------------------------------------------
 # Resumen general
 #---------------------------------------------------------------
