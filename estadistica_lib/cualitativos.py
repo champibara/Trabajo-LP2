@@ -93,3 +93,16 @@ class DatosCualitativos(EstadisticaBase):
             "Tabla_Frecuencias": self.tabla_frecuencia()
         }
         return res
+# ==========================
+# ✅ EJEMPLO DE USO
+# ==========================
+if __name__ == "__main__":
+    archivo = "Alumnos Matriculados 2025-II-UNALM.csv"   # reemplazándolo por el archivo csv
+    columna = "Curso"      # ejemplo de columna cualitativa
+
+    analisis = DatosCualitativos(archivo, columna, separador=';')
+    resumen = analisis.resumen()
+
+    # Mostrar resumen
+    import pprint
+    pprint.pprint(resumen)
