@@ -36,3 +36,13 @@ class DatosCualitativos(EstadisticaBase):
         
         # Aseguramos que los datos internos son tratados como categóricos
         self.datos = self.datos.astype('category')
+        
+    def calcular_moda(self):
+        """
+        Calcula la moda para la variable categórica.
+        
+        Returns:
+            list/str: La(s) categoría(s) con mayor frecuencia.
+        """
+        modas = self.datos.mode().tolist()
+        return modas[0] if len(modas) == 1 else modas        
