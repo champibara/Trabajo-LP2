@@ -44,3 +44,34 @@ class MedidasCuantitativas(EstadisticaBase):
         # Se devuelven los tres cuartiles en un diccionario
         return {"Q1": Q1, "Q2": Q2, "Q3": Q3}
 
+    def percentil(self, p):
+        """
+        Calcula el percentil indicado usando interpolación lineal. 
+        Parámetros:
+            p (float): Percentil deseado (valor entre 0 y 100).
+        """
+        # Validación del rango del percentil
+        if not (0 <= p <= 100):
+            raise ValueError("El percentil debe estar entre 0 y 100.")
+
+        # Elimina valores nulos y ordena los datos
+        datos_ordenados = sorted(self.datos.dropna())
+        n = self.contar_datos()
+
+        # Si no hay datos válidos, retorna NaN
+        if n == 0:
+            return float('nan')
+
+        # Posición teórica dentro del conjunto ordenado
+        k = (p / 100) * (n - 1)
+
+        # Índices inferior (f) y superior (c)
+        f = int(np.floor(k))
+        c = int(np.ceil(k))
+
+        # Si ambos índices son iguales, el percentil coincide con ese valor
+        if f == c:
+            return datos_ordenados[f]
+        
+        # Interpolación lineal entre los valores vecinos
+        return datos_ordenados[f] + (k - f) * (datos_ordenados[c] - datos_ordenados[f])
