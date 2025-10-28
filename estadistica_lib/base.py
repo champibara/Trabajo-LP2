@@ -97,3 +97,19 @@ class EstadisticaBase:
         modas = [k for k, v in frecuencias.items() if v == max_freq]
         return modas if len(modas) > 1 else modas[0]
 
+    def varianza(self):
+        """Calcula la varianza muestral sin usar numpy.mean ni statistics."""
+        n = self.obtener_n_observaciones()
+        if n < 2:
+            return float('nan')
+            
+        media = self.media()
+        suma_cuadrados = 0
+        for valor in self.datos.dropna():
+            suma_cuadrados += (valor - media) ** 2
+        return suma_cuadrados / (n - 1)
+
+    def desviacion_estandar(self):
+        """Calcula la desviación estándar a partir de la varianza."""
+        var = self.varianza()
+        return np.sqrt(var)
