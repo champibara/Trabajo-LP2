@@ -1,92 +1,98 @@
 import pandas as pd
-from .base import EstadisticaBase
+import numpy as np
+
+class EstadisticaBase:
+    """
+    Clase base para operaciones estadísticas genéricas.
+    Las clases hijas (como DatosCualitativos) heredan de esta.
+    """
+    def _init_(self, datos):
+        self.datos = pd.Series(datos)
+
+    def obtener_n_observaciones(self):
+        """Devuelve el número de observaciones válidas (no nulas)."""
+        return self.datos.dropna().shape[0]
+
 
 class DatosCualitativos(EstadisticaBase):
     """
-    Clase para analizar variables cualitativas o categóricas.
+    Clase para analizar variables cualitativas.
     Hereda de EstadisticaBase y aplica Polimorfismo.
     """
 
-    def __init__(self, ruta_archivo, columna, separador=';'):
+    def _init_(self, ruta_archivo, columna, separador=';'):
         """
-        Inicializa la clase leyendo un archivo CSV y seleccionando la columna a analizar.
-        
+        Inicializa la clase leyendo el archivo CSV y seleccionando la columna.
+
         Args:
-            ruta_archivo (str): Ruta del archivo CSV.
-            columna (str): Nombre de la columna cualitativa.
-            separador (str): Delimitador del archivo (por defecto ';').
+            ruta_archivo (str): La ruta al archivo CSV.
+            columna (str): El nombre de la columna cualitativa a analizar.
+            separador (str): El delimitador del archivo (ej: ';', ',').
         """
-        # Cargar el archivo
+        self.ruta_archivo = ruta_archivo
+        self.nombre_columna = columna
+
+        # Cargar archivo CSV con codificación 'latin1' (para evitar errores de acentos)
         try:
-            df = pd.read_csv(ruta_archivo, sep=separador)
+            df = pd.read_csv(ruta_archivo, sep=separador, encoding='latin1')
         except FileNotFoundError:
             raise FileNotFoundError(f"Archivo no encontrado en la ruta: {ruta_archivo}")
 
-        # Validar la existencia de la columna
+        # Validar que la columna exista
         if columna not in df.columns:
             raise ValueError(f"La columna '{columna}' no existe en el archivo.")
 
-        # Llamar al constructor de la clase base con los datos seleccionados
-        super().__init__(df[columna].astype(str))  # Se guardan los datos como texto
-        self._nombre_columna = columna
+        # Inicializa clase base con la columna seleccionada
+        super()._init_(df[columna].astype(str))
 
         # Convertir los datos a tipo categórico
-        self._datos = self._datos.astype('category')
-
-    # -------------------------------------------------------------
-    # Métodos específicos para variables cualitativas
-    # -------------------------------------------------------------
+        self.datos = self.datos.astype("category")
 
     def calcular_moda(self):
-        """
-        Calcula la moda (valor o valores más frecuentes).
-        Returns:
-            str | list: La(s) categoría(s) con mayor frecuencia.
-        """
-        modas = self._datos.mode().tolist()
-        return modas[0] if len(modas) == 1 else modas
+        """Calcula la moda para la variable categórica."""
+        conteo = self.datos.value_counts()
+        max_freq = conteo.max()
+        modas = conteo[conteo == max_freq].index.tolist()
+        return {"Moda": modas, "Frecuencia": int(max_freq)}
 
-def tabla_frecuencia(self, ruta_guardado="tablas/tabla_frecuencias.csv"):
-    """
-    Genera una tabla con frecuencias absoluta, relativa y acumulada.
-    Guarda la tabla como archivo CSV en la carpeta 'tablas'.
-    """
-    fa = self._datos.value_counts(dropna=True)
-    fr = self._datos.value_counts(normalize=True, dropna=True).round(4)
+    def tabla_frecuencia(self):
+        """Genera la tabla de frecuencias: Absoluta, Relativa, y Acumulada."""
+        conteo = self.datos.value_counts().sort_index()
+        fr = (conteo / conteo.sum()).round(4)
 
-    faa = fa.cumsum()
-    fra = fr.cumsum().round(4)
+        tabla_df = pd.DataFrame({
+            "Frecuencia_Absoluta": conteo,
+            "Frecuencia_Relativa": (fr * 100).map("{:.2f}%".format),
+            "Frecuencia_Absoluta_Acumulada": conteo.cumsum(),
+            "Frecuencia_Relativa_Acumulada": ((fr.cumsum()) * 100).map("{:.2f}%".format)
+        })
 
-    tabla = pd.DataFrame({
-        "Frecuencia_Absoluta": fa,
-        "Frecuencia_Relativa (%)": fr * 100,
-        "Frecuencia_Absoluta_Acumulada": faa,
-        "Frecuencia_Relativa_Acumulada (%)": fra * 100
-    })
-
-    tabla.index.name = self._nombre_columna
-    tabla.reset_index(inplace=True)
-    
-    # Guardar como archivo CSV en la carpeta 'tablas'
-    tabla.to_csv(ruta_guardado, index=False)
-    print(f"Tabla de frecuencias guardada en: {ruta_guardado}")
-    
-    return tabla
-
-    # -------------------------------------------------------------
-    # Polimorfismo: redefinición de resumen()
-    # -------------------------------------------------------------
+        return tabla_df.reset_index(names=self.nombre_columna).to_dict("records")
 
     def resumen(self):
-        """
-        Genera un resumen general de la variable cualitativa.
-        Returns:
-            dict: Resumen con la moda y la tabla de frecuencias.
-        """
-        return {
-            "Tipo de Dato": "Cualitativo / Categórico",
-            "Variable": self._nombre_columna,
-            "Observaciones Válidas": self.obtener_n_observaciones(),
+        """Devuelve un resumen completo del análisis de la variable cualitativa."""
+        res = {
+            "Tipo_Dato": "Cualitativo / Categórico",
+            "Variable": self.nombre_columna,
+            "Observaciones_Validas": self.obtener_n_observaciones(),
+            "Datos_Nulos": int(self.datos.isna().sum()),
+            "Número_Categorías": int(self.datos.nunique()),
             "Moda": self.calcular_moda(),
-            "Tabla de Frecuencias": self.tabla_frecuencia().to_dict(orient='records')
+            "Tabla_Frecuencias": self.tabla_frecuencia()
         }
+        return res
+
+
+# ---------------------------------------------------------------
+# Ejemplo de uso
+# ---------------------------------------------------------------
+if _name_ == "_main_":
+    archivo = "Alumnos Matriculados 2025-II-UNALM.csv"   # archivo CSV cargado
+    columna = "CURSO"   # 👈 Nombre exacto de la columna en el CSV
+
+    analisis = DatosCualitativos(archivo, columna, separador=';')
+    resumen = analisis.resumen()
+
+    # Mostrar resumen
+    import pprint
+    pprint.pprint(resumen)
