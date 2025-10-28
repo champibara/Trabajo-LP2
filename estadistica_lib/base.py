@@ -41,9 +41,9 @@ class EstadisticaBase:
         """Devuelve el número de observaciones no nulas."""
         return self._n_observaciones
 
-------------------------------------------------------------
+#------------------------------------------------------------
 # Métodos Estadísticos
-------------------------------------------------------------
+#------------------------------------------------------------
 
     def contar_datos(self):
         """Devuelve la cantidad total de datos (incluyendo valores nulos si existen)."""
@@ -55,3 +55,44 @@ class EstadisticaBase:
         for valor in self.datos.dropna():
             total += valor
         return total
+
+    def media(self):
+        """Calcula la media aritmética sin usar funciones externas."""
+        n = self.obtener_n_observaciones()
+        if n == 0:
+            return float('nan')
+        return self.suma() / n
+
+    def mediana(self):
+        """Calcula la mediana ordenando los datos manualmente."""
+        n = self.obtener_n_observaciones()
+        if n == 0:
+            return float('nan')
+        
+        datos_ordenados = sorted(self.datos.dropna())
+        mitad = n // 2
+
+        # Si el número de datos es par, promedio de los dos centrales
+        if n % 2 == 0:
+            return (datos_ordenados[mitad - 1] + datos_ordenados[mitad]) / 2
+        else:
+            return datos_ordenados[mitad]
+
+    def moda(self):
+        """Calcula la moda sin usar librerías externas."""
+        n = self.obtener_n_observaciones()
+        if n == 0:
+            return []
+        
+        frecuencias = {}
+        for valor in self.datos.dropna():
+            frecuencias[valor] = frecuencias.get(valor, 0) + 1
+        
+        max_freq = max(frecuencias.values())
+        
+        # Si todos los valores son únicos, no hay moda
+        if max_freq == 1 and n > 1:
+            return []
+        
+        modas = [k for k, v in frecuencias.items() if v == max_freq]
+        return modas if len(modas) > 1 else modas[0]
