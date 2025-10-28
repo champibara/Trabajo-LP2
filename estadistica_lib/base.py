@@ -158,5 +158,3 @@ class EstadisticaBase:
 #    print("---- RESUMEN ESTADÍSTICO ----")
 #    for k, v in analisis.resumen().items():
 #        print(f"{k}: {v}")
-
->>>>>>> 0128dc081080304b35e9f644f15a3ee07c0e6b82
