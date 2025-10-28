@@ -3,18 +3,19 @@ import numpy as np
 
 class EstadisticaBase:
     """
-    Clase base abstracta para todos los tipos de análisis estadístico.
-    Define la estructura básica, validaciones y encapsulamiento.
+    Clase base para todos los tipos de análisis estadístico.
+    Define estructura, validaciones y métodos esenciales.
     """
+
     def __init__(self, datos):
         """
         Constructor que recibe los datos y los normaliza a una Serie de Pandas.
         """
-        # Validación para evitar listas de datos vacías
+        # Validar que los datos no estén vacíos
         if datos is None or (isinstance(datos, (list, tuple)) and not datos):
             raise ValueError("La lista de datos no puede estar vacía.")
             
-        # Normalizar datos a pd.Series y usar atributo "privado"
+        # Normalizar los datos a una Serie de Pandas
         if isinstance(datos, (list, tuple)):
             self._datos = pd.Series(datos)
         elif isinstance(datos, pd.Series):
@@ -22,29 +23,30 @@ class EstadisticaBase:
         else:
             raise TypeError("El formato de datos debe ser lista, tupla o pd.Series.")
 
+# -------------------------------------------------------------
+# Métodos de acceso y control
+# -------------------------------------------------------------
+
+    def obtener_datos(self):
+        """Devuelve los datos almacenados como Serie de Pandas."""
+        return self._datos
+
     def obtener_n_observaciones(self):
         """Devuelve el número de observaciones no nulas."""
-        # Usa el atributo privado _datos
-        return self._datos.dropna().shape[0] 
-        
-    def resumen(self):
-        """
-        Método abstracto. Debe ser implementado por las clases hijas.
-        """
-        raise NotImplementedError("Las clases hijas deben implementar el método resumen()")
+        return self._datos.dropna().shape[0]
 
-#-------------------------------------------------------------
-# Métodos Estadísticos
-#-------------------------------------------------------------
+# -------------------------------------------------------------
+# Métodos estadísticos
+# -------------------------------------------------------------
 
     def contar_datos(self):
-        """Devuelve la cantidad total de datos (incluyendo valores nulos si existen)."""
-        return len(self.datos)
+        """Devuelve la cantidad total de datos (incluyendo valores nulos)."""
+        return len(self._datos)
 
     def suma(self):
-        """Calcula la suma total de los datos sin usar funciones integradas de Python."""
+        """Calcula la suma total de los datos (ignorando valores nulos)."""
         total = 0
-        for valor in self.datos.dropna():
+        for valor in self._datos.dropna():
             total += valor
         return total
 
@@ -61,10 +63,10 @@ class EstadisticaBase:
         if n == 0:
             return float('nan')
         
-        datos_ordenados = sorted(self.datos.dropna())
+        datos_ordenados = sorted(self._datos.dropna())
         mitad = n // 2
 
-        # Si el número de datos es par, promedio de los dos centrales
+        # Si el número de datos es par, se promedian los dos valores centrales
         if n % 2 == 0:
             return (datos_ordenados[mitad - 1] + datos_ordenados[mitad]) / 2
         else:
@@ -77,12 +79,12 @@ class EstadisticaBase:
             return []
         
         frecuencias = {}
-        for valor in self.datos.dropna():
+        for valor in self._datos.dropna():
             frecuencias[valor] = frecuencias.get(valor, 0) + 1
         
         max_freq = max(frecuencias.values())
         
-        # Si todos los valores son únicos, no hay moda
+        # Si todos los valores son únicos, no existe moda
         if max_freq == 1 and n > 1:
             return []
         
@@ -90,15 +92,13 @@ class EstadisticaBase:
         return modas if len(modas) > 1 else modas[0]
 
     def varianza(self):
-        """Calcula la varianza muestral sin usar numpy.mean ni statistics."""
+        """Calcula la varianza muestral sin usar funciones externas."""
         n = self.obtener_n_observaciones()
         if n < 2:
             return float('nan')
             
         media = self.media()
-        suma_cuadrados = 0
-        for valor in self.datos.dropna():
-            suma_cuadrados += (valor - media) ** 2
+        suma_cuadrados = sum((valor - media) ** 2 for valor in self._datos.dropna())
         return suma_cuadrados / (n - 1)
 
     def desviacion_estandar(self):
@@ -111,7 +111,7 @@ class EstadisticaBase:
         n = self.obtener_n_observaciones()
         if n == 0:
             return float('nan')
-        datos_validos = self.datos.dropna()
+        datos_validos = self._datos.dropna()
         return datos_validos.max() - datos_validos.min()
         
     def coeficiente_variacion(self):
@@ -127,14 +127,12 @@ class EstadisticaBase:
             
         return (desv_est / media) * 100
 
-#-------------------------------------------------------------
-# Resumen
-#-------------------------------------------------------------
+# -------------------------------------------------------------
+# Resumen general
+# -------------------------------------------------------------
 
     def resumen(self):
-        """
-        Genera un resumen con las principales medidas descriptivas.
-        """
+        """Genera un resumen con las principales medidas descriptivas."""
         return {
             "Cantidad de datos": self.contar_datos(),
             "Datos válidos": self.obtener_n_observaciones(),
@@ -148,8 +146,9 @@ class EstadisticaBase:
         }
 
 
-
-# Ejemplo:
+# -------------------------------------------------------------
+# Ejemplo de uso
+# -------------------------------------------------------------
 
 #if __name__ == "__main__":
 #    datos = [5, 8, 12, 5, 7, 9, 8, 10, 5]
