@@ -110,3 +110,23 @@ class MedidasCuantitativas(EstadisticaBase):
         coeficiente = 1 / math.sqrt(2 * math.pi)
         exponente = math.exp(-0.5 * z ** 2)
         return coeficiente * exponente
+    
+    def z_score(self, x):
+
+        """
+        Calcula el puntaje Z (valor estandarizado) para un valor dado de x.
+
+        El puntaje Z indica cuántas desviaciones estándar se encuentra un valor 
+        respecto a la media de la distribución.
+        Parámetros:
+            x (float): Valor del dato que se desea estandarizar.
+        """
+        mu = self.media()
+        sigma = self.desviacion_estandar()
+
+        # Evita división por cero si todos los valores son iguales
+        if sigma == 0:
+            raise ValueError("No se puede calcular el puntaje Z: la desviación estándar es cero.")
+
+        return (x - mu) / sigma
+
