@@ -75,3 +75,38 @@ class MedidasCuantitativas(EstadisticaBase):
         
         # Interpolación lineal entre los valores vecinos
         return datos_ordenados[f] + (k - f) * (datos_ordenados[c] - datos_ordenados[f])
+
+    # ---------------------------------------------------------
+    # Distribución 
+    #----------------------------------------------------------
+    
+    def normal(self, x):
+        """
+        Calcula el valor de la función de densidad de la distribución normal 
+        para un valor específico de x.
+        Parámetros:
+            x (float): Valor para el cual se evalúa la densidad.
+        """
+        mu = self.media()
+        sigma = self.desviacion_estandar()
+
+        # Validación para evitar división por cero
+        if sigma == 0:
+            return 0.0
+
+        # Fórmula de la distribución normal
+        coeficiente = 1 / (sigma * math.sqrt(2 * math.pi))
+        exponente = math.exp(-0.5 * ((x - mu) / sigma) ** 2)
+        return coeficiente * exponente
+
+
+    def normal_estandar(self, z):
+        """
+        Calcula el valor de la función de densidad de la distribución normal estándar 
+        (media = 0, desviación estándar = 1).    
+        Parámetros:
+            z (float): Valor de la variable estandarizada.
+        """
+        coeficiente = 1 / math.sqrt(2 * math.pi)
+        exponente = math.exp(-0.5 * z ** 2)
+        return coeficiente * exponente
