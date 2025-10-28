@@ -134,3 +134,35 @@ class EstadisticaBase:
             return 0.0 if desv_est == 0 else float('inf')
             
         return (desv_est / media) * 100
+
+#-------------------------------------------------------------
+# Resumen
+#-------------------------------------------------------------
+
+    def resumen(self):
+        """
+        Genera un resumen con las principales medidas descriptivas.
+        """
+        return {
+            "Cantidad de datos": self.contar_datos(),
+            "Datos válidos": self.obtener_n_observaciones(),
+            "Media": self.media(),
+            "Mediana": self.mediana(),
+            "Moda": self.moda(),
+            "Varianza": self.varianza(),
+            "Desviación estándar": self.desviacion_estandar(),
+            "Rango": self.rango(),
+            "Coeficiente de variación (%)": self.coeficiente_variacion()
+        }
+
+
+
+# Ejemplo:
+
+#if __name__ == "__main__":
+#    datos = [5, 8, 12, 5, 7, 9, 8, 10, 5]
+#    analisis = Estadisticabase(datos)
+    
+#    print("=== RESUMEN ESTADÍSTICO ===")
+#    for k, v in analisis.resumen().items():
+#        print(f"{k}: {v}")
