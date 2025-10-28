@@ -49,7 +49,7 @@ class DatosCualitativos(EstadisticaBase):
 
     def tabla_frecuencia(self):
         """
-        [C17 Docstring] Genera la tabla de frecuencias: Absoluta, Relativa, y Acumulada.
+        Genera la tabla de frecuencias: Absoluta, Relativa, y Acumulada.
         """
         # Frecuencia Absoluta y Relativa
         fa = self.datos.value_counts(dropna=True)
@@ -71,3 +71,16 @@ class DatosCualitativos(EstadisticaBase):
         tabla_df["Frecuencia_Relativa_Acumulada"] = (tabla_df["Frecuencia_Relativa_Acumulada"] * 100).apply(lambda x: f"{x:.2f}%")
         
         return tabla_df.reset_index().rename(columns={'index': self.nombre_columna}).to_dict('records')
+
+    def resumen(self):
+        """
+        Sobrescribe el método resumen() para variables categóricas.
+        """
+        res = {
+            "Tipo_Dato": "Cualitativo / Categórico",
+            "Variable": self.nombre_columna,
+            "Observaciones_Validas": self.obtener_n_observaciones(),
+            "Moda": self.calcular_moda(),
+            "Tabla_Frecuencias": self.tabla_frecuencia()
+        }
+        return res
