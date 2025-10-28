@@ -1,108 +1,88 @@
 import pandas as pd
-import numpy as np
-
-class EstadisticaBase:
-    """
-    Clase base para operaciones estadísticas genéricas.
-    Las clases hijas (como DatosCualitativos) heredan de esta.
-    """
-    def __init__(self, datos):
-        self.datos = pd.Series(datos)
-
-    def obtener_n_observaciones(self):
-        """Devuelve el número de observaciones válidas (no nulas)."""
-        return self.datos.dropna().shape[0]
-
+from .base import EstadisticaBase
 
 class DatosCualitativos(EstadisticaBase):
     """
-    Clase para analizar variables cualitativas.
+    Clase para analizar variables cualitativas o categóricas.
     Hereda de EstadisticaBase y aplica Polimorfismo.
     """
 
     def __init__(self, ruta_archivo, columna, separador=';'):
         """
-        Inicializa la clase leyendo el archivo CSV y seleccionando la columna.
-
+        Inicializa la clase leyendo un archivo CSV y seleccionando la columna a analizar.
+        
         Args:
-            ruta_archivo (str): La ruta al archivo CSV.
-            columna (str): El nombre de la columna cualitativa a analizar.
-            separador (str): El delimitador del archivo (ej: ';', ',').
+            ruta_archivo (str): Ruta del archivo CSV.
+            columna (str): Nombre de la columna cualitativa.
+            separador (str): Delimitador del archivo (por defecto ';').
         """
-        self.ruta_archivo = ruta_archivo
-        self.nombre_columna = columna
-
-        # Cargar archivo CSV
+        # Cargar el archivo
         try:
             df = pd.read_csv(ruta_archivo, sep=separador)
         except FileNotFoundError:
             raise FileNotFoundError(f"Archivo no encontrado en la ruta: {ruta_archivo}")
 
-        # Validar que la columna exista
+        # Validar la existencia de la columna
         if columna not in df.columns:
             raise ValueError(f"La columna '{columna}' no existe en el archivo.")
 
-        # Inicializa clase base con la columna seleccionada
-        super().__init__(df[columna].astype(str))
+        # Llamar al constructor de la clase base con los datos seleccionados
+        super().__init__(df[columna].astype(str))  # Se guardan los datos como texto
+        self._nombre_columna = columna
 
         # Convertir los datos a tipo categórico
-        self.datos = self.datos.astype("category")
+        self._datos = self._datos.astype('category')
+
+    # -------------------------------------------------------------
+    # Métodos específicos para variables cualitativas
+    # -------------------------------------------------------------
 
     def calcular_moda(self):
         """
-        Calcula la moda para la variable categórica.
+        Calcula la moda (valor o valores más frecuentes).
         Returns:
-            dict: Moda(s) y su frecuencia.
+            str | list: La(s) categoría(s) con mayor frecuencia.
         """
-        conteo = self.datos.value_counts()
-        max_freq = conteo.max()
-        modas = conteo[conteo == max_freq].index.tolist()
-        return {"Moda": modas, "Frecuencia": int(max_freq)}
+        modas = self._datos.mode().tolist()
+        return modas[0] if len(modas) == 1 else modas
 
     def tabla_frecuencia(self):
         """
-        Genera la tabla de frecuencias: Absoluta, Relativa, y Acumulada.
+        Genera una tabla con frecuencias absoluta, relativa y acumulada.
         Returns:
-            list[dict]: Tabla de frecuencias lista para convertir a JSON o imprimir.
+            DataFrame: Tabla de frecuencias.
         """
-        conteo = self.datos.value_counts().sort_index()
-        fr = (conteo / conteo.sum()).round(4)
+        fa = self._datos.value_counts(dropna=True)
+        fr = self._datos.value_counts(normalize=True, dropna=True).round(4)
 
-        tabla_df = pd.DataFrame({
-            "Frecuencia_Absoluta": conteo,
-            "Frecuencia_Relativa": (fr * 100).map("{:.2f}%".format),
-            "Frecuencia_Absoluta_Acumulada": conteo.cumsum(),
-            "Frecuencia_Relativa_Acumulada": ((fr.cumsum()) * 100).map("{:.2f}%".format)
+        faa = fa.cumsum()
+        fra = fr.cumsum().round(4)
+
+        tabla = pd.DataFrame({
+            "Frecuencia_Absoluta": fa,
+            "Frecuencia_Relativa": fr * 100,
+            "Frecuencia_Absoluta_Acumulada": faa,
+            "Frecuencia_Relativa_Acumulada": fra * 100
         })
 
-        return tabla_df.reset_index(names=self.nombre_columna).to_dict("records")
+        tabla.index.name = self._nombre_columna
+        tabla.reset_index(inplace=True)
+        return tabla
+
+    # -------------------------------------------------------------
+    # Polimorfismo: redefinición de resumen()
+    # -------------------------------------------------------------
 
     def resumen(self):
         """
-        Devuelve un resumen completo del análisis de la variable cualitativa.
+        Genera un resumen general de la variable cualitativa.
         Returns:
-            dict: Información resumida.
+            dict: Resumen con la moda y la tabla de frecuencias.
         """
-        res = {
-            "Tipo_Dato": "Cualitativo / Categórico",
-            "Variable": self.nombre_columna,
-            "Observaciones_Validas": self.obtener_n_observaciones(),
-            "Datos_Nulos": int(self.datos.isna().sum()),
-            "Número_Categorías": int(self.datos.nunique()),
+        return {
+            "Tipo de Dato": "Cualitativo / Categórico",
+            "Variable": self._nombre_columna,
+            "Observaciones Válidas": self.obtener_n_observaciones(),
             "Moda": self.calcular_moda(),
-            "Tabla_Frecuencias": self.tabla_frecuencia()
+            "Tabla de Frecuencias": self.tabla_frecuencia().to_dict(orient='records')
         }
-        return res
-# ==========================
-# ✅ EJEMPLO DE USO
-# ==========================
-if __name__ == "__main__":
-    archivo = "Alumnos Matriculados 2025-II-UNALM.csv"   # reemplazándolo por el archivo csv
-    columna = "Curso"      # ejemplo de columna cualitativa
-
-    analisis = DatosCualitativos(archivo, columna, separador=';')
-    resumen = analisis.resumen()
-
-    # Mostrar resumen
-    import pprint
-    pprint.pprint(resumen)
