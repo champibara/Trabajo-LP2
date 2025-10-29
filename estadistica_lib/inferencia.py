@@ -24,7 +24,9 @@ class InferenciaEstadistica(DatosCuantitativos):
              raise ValueError("Se requieren al menos 2 observaciones para la inferencia.")
              
         print(f"Módulo de Inferencia Estadística cargado para: {self.columna}")
-    # --- Métodos de Inferencia Unimuestra ---
+    # ----------------------------------------------------------------------
+    # 1. INFERENCIA UNIMUESTRA: Intervalo de Confianza para la Media
+    # ----------------------------------------------------------------------
     
     def intervalo_confianza_media(self, nivel_confianza=0.95):
         """
