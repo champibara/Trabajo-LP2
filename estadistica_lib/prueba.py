@@ -1,5 +1,5 @@
 import pandas as pd
-from estadistica_lib.cualitativas import DatosCualitativos
+from estadistica_lib.cualitativos import DatosCualitativos
 
 def detectar_separador(ruta):
     """Detecta automáticamente el separador del archivo CSV."""
