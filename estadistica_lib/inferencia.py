@@ -138,3 +138,20 @@ class InferenciaEstadistica(DatosCuantitativos):
             num = (s1**2 / n1 + s2**2 / n2)**2
             den = ((s1**2 / n1)**2 / (n1 - 1)) + ((s2**2 / n2)**2 / (n2 - 1))
             df = num / den
+    # Estadístico t
+        T_stat = (m1 - m2) / error_estandar
+        
+        # P-valor (prueba de dos colas)
+        p_value = 2 * (1 - stats.t.cdf(np.abs(T_stat), df))
+        
+        conclusion = "No se rechaza H0 (Medias Iguales)"
+        if p_value < nivel_significancia:
+            conclusion = "Se rechaza H0 (Medias Diferentes)"
+
+        return {
+            "Prueba": f"Prueba t ({'Pooled' if varianzas_iguales else 'Welch'})",
+            "T_Estadístico": T_stat.round(4),
+            "Grados_Libertad": df.round(2),
+            "P_Valor": p_value.round(4),
+            "Conclusion": conclusion
+        }
