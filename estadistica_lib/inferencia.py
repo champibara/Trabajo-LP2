@@ -1,7 +1,7 @@
 # Importamos los paquetes y la clase padre a utilizar
 
 from .cuantitativos import DatosCuantitativos # Se importa la clase padre
-from .base import DatosBase # Se importa la base para chequeos de tipo
+from .base import DatosBase # Se importa la base
 from scipy import stats 
 import numpy as np
 import pandas as pd
