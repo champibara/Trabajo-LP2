@@ -60,7 +60,9 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Inferior': limite_inferior.round(4),
             'Limite_Superior': limite_superior.round(4)
         }
-    # --- Métodos de Pruebas de Hipótesis (Dos Muestras) ---
+    # ----------------------------------------------------------------------
+    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t y F)
+    # ----------------------------------------------------------------------
     
     def prueba_f_varianzas(self, otra_muestra, nivel_significancia=0.05):
         """
@@ -69,3 +71,36 @@ class InferenciaEstadistica(DatosCuantitativos):
         """
         if not isinstance(otra_muestra, DatosBase):
             raise TypeError("La otra_muestra debe ser una instancia de DatosBase o una clase hija.")
+        
+        # Acceso directo a las varianzas del resumen (ya agregada en DatosCuantitativos)
+        var1 = self.calcular_resumen()['Varianza']
+        var2 = otra_muestra.calcular_resumen()['Varianza']
+            
+        n1 = self._n
+        n2 = otra_muestra.obtener_n_observaciones()
+            
+        if n1 < 2 or n2 < 2:
+            return {"Error": "Se requieren al menos 2 obs. en cada muestra para varianza."}
+            
+        # Estadístico F (mayor varianza en el numerador)
+        if var1 >= var2:
+            F_stat = var1 / var2
+            df1, df2 = n1 - 1, n2 - 1
+        else:
+            F_stat = var2 / var1
+            df1, df2 = n2 - 1, n1 - 1
+        
+        # P-valor (prueba de dos colas: 2 * (1 - cdf))
+        p_value = 2 * (1 - stats.f.cdf(F_stat, df1, df2))
+        
+        conclusion = "No se rechaza H0 (Varianzas Iguales)"
+        if p_value < nivel_significancia:
+            conclusion = "Se rechaza H0 (Varianzas Diferentes)"
+
+        return {
+            "Prueba": "Prueba F de Varianzas",
+            "F_Estadístico": F_stat.round(4),
+            "P_Valor": p_value.round(4),
+            "Nivel_Significancia": nivel_significancia,
+            "Conclusion": conclusion
+        }
