@@ -12,4 +12,12 @@ Este proyecto implementa un conjunto de clases en **Python** para el análisis e
   - 📈 **Medidas de dispersión**
   - 📋 **Tablas de frecuencia y porcentajes acumulados**
 
->>>>>>> 1c8dbfd7ea7353cce48b010f5027a535c2c5cfab
+## 🧠 Objetivos del Proyecto
+
+- Aplicar **herencia**, **polimorfismo** y **encapsulamiento** en Python.  
+- Implementar **clases reutilizables** para análisis estadístico.  
+- Automatizar el cálculo de:
+
+  - 📊 **Medidas de tendencia central:** media, mediana y moda.  
+  - 📈 **Medidas de dispersión:** varianza, desviación estándar y rango.  
+  - 📋 **Tablas de frecuencia y porcentajes acumulados.**
