@@ -30,8 +30,8 @@ def main():
     
     # ----------------------------------------------------
     # 1. PRUEBA CON DATOS CUALITATIVOS
-    # NOTA: Ajusta la columna si es diferente en tu CSV.
-    columna_cualitativa = 'Sexo' 
+    # Se usa 'FACULTAD' como la columna de datos cualitativos (CORREGIDO)
+    columna_cualitativa = 'FACULTAD' 
 
     try:
         # Se crea el objeto de la clase hija (Herencia).
@@ -46,14 +46,13 @@ def main():
         moda = datos_cual.calcular_moda()
         print(f"\nModa(s) de {columna_cualitativa}: {moda}")
 
-
     except Exception as e:
         print(f"\n[ERROR al procesar Cualitativos]: {e}")
 
     # ----------------------------------------------------
     # 2. PRUEBA CON DATOS CUANTITATIVOS
-    # NOTA: Ajusta la columna si es diferente en tu CSV.
-    columna_cuantitativa = 'Edad' 
+    # Se usa 'NRO_MATRICULADOS' como la columna de datos cuantitativos (CORREGIDO)
+    columna_cuantitativa = 'NRO_MATRICULADOS' 
 
     try:
         # Se crea el objeto de la clase hija (Herencia).
@@ -77,4 +76,5 @@ def main():
 
 
 if __name__ == '__main__':
+    # Se ejecuta la función principal del programa.
     main()

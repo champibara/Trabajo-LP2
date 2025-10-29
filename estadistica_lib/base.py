@@ -1,5 +1,4 @@
 # estadistica_lib/base.py
-
 import pandas as pd
 
 class DatosBase:
@@ -7,11 +6,15 @@ class DatosBase:
 
     def __init__(self, ruta_archivo, columna_interes):
         
-        # Se asume que el separador puede ser ';' o ',' e intenta cargar el archivo.
+        # Se agrega la codificación 'latin-1' (o 'cp1252') para manejar caracteres españoles (ñ, tildes).
+        CODIFICACION = 'latin-1' # Puedes probar también 'cp1252' si 'latin-1' falla.
+        
+        # Se intenta cargar el archivo con el separador ';'
         try:
-            self.df = pd.read_csv(ruta_archivo, sep=';')
+            self.df = pd.read_csv(ruta_archivo, sep=';', encoding=CODIFICACION)
         except Exception:
-            self.df = pd.read_csv(ruta_archivo, sep=',')
+            # Si falla, se intenta cargar con el separador ','
+            self.df = pd.read_csv(ruta_archivo, sep=',', encoding=CODIFICACION)
             
         self.columna = columna_interes
         
