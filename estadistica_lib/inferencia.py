@@ -176,7 +176,7 @@ class InferenciaEstadistica(DatosCuantitativos):
             num = (s1**2 / n1 + s2**2 / n2)**2
             den = ((s1**2 / n1)**2 / (n1 - 1)) + ((s2**2 / n2)**2 / (n2 - 1))
             df = num / den
-    # Estadístico t
+        # Estadístico t
         T_stat = (m1 - m2) / error_estandar
         
         # P-valor (prueba de dos colas)
