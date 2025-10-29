@@ -38,7 +38,7 @@ class InferenciaEstadistica(DatosCuantitativos):
         n = self._n
         
         grados_libertad = n - 1
-        
+
         # Valor crítico t de Student: ppf (percent point function = inversa de la CDF)
         t_critico = stats.t.ppf(1 - (1 - nivel_confianza) / 2, grados_libertad)
         
@@ -58,3 +58,12 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Inferior': limite_inferior.round(4),
             'Limite_Superior': limite_superior.round(4)
         }
+    # --- Métodos de Pruebas de Hipótesis (Dos Muestras) ---
+    
+    def prueba_f_varianzas(self, otra_muestra, nivel_significancia=0.05):
+        """
+        Prueba F para comparar si dos muestras provienen de poblaciones 
+        con varianzas iguales (Homocedasticidad).
+        """
+        if not isinstance(otra_muestra, DatosBase):
+            raise TypeError("La otra_muestra debe ser una instancia de DatosBase o una clase hija.")
