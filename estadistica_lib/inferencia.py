@@ -91,7 +91,13 @@ class InferenciaEstadistica(DatosCuantitativos):
         conclusion = "No se rechaza H0 (No hay diferencia significativa)"
         if p_value < nivel_significancia:
             conclusion = "Se rechaza H0 (Existe diferencia significativa)"
-    
+        return {
+            "Prueba": "Prueba Z para la Media (σ conocido)",
+            "Z_Estadístico": Z_stat.round(4),
+            "Media_Hipotética (μ0)": media_hipotetica,
+            "P_Valor": p_value.round(4),
+            "Conclusion": conclusion
+        }
     # ----------------------------------------------------------------------
     # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
     # ----------------------------------------------------------------------
