@@ -122,4 +122,19 @@ class InferenciaEstadistica(DatosCuantitativos):
         n1, n2 = self._n, otra_muestra.obtener_n_observaciones()
         
         if n1 < 2 or n2 < 2:
-            return {"Error": "Se requieren al menos 2 obs. en cada muestra para la prueba t."}   
+            return {"Error": "Se requieren al menos 2 obs. en cada muestra para la prueba t."}
+        
+        # Cálculo del Estadístico y Grados de Libertad (df)
+        if varianzas_iguales:
+            # PRUEBA T CON VARIANZAS IGUALES (Pooled)
+            var_pool = (((n1 - 1) * s1**2) + ((n2 - 1) * s2**2)) / (n1 + n2 - 2)
+            error_estandar = np.sqrt(var_pool * (1/n1 + 1/n2))
+            df = n1 + n2 - 2
+        else:
+            # PRUEBA T CON VARIANZAS DIFERENTES (Welch)
+            error_estandar = np.sqrt((s1**2 / n1) + (s2**2 / n2))
+            
+            # Grados de libertad (fórmula de Welch-Satterthwaite)
+            num = (s1**2 / n1 + s2**2 / n2)**2
+            den = ((s1**2 / n1)**2 / (n1 - 1)) + ((s2**2 / n2)**2 / (n2 - 1))
+            df = num / den
