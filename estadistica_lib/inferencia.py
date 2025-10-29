@@ -24,3 +24,17 @@ class InferenciaEstadistica(DatosCuantitativos):
              raise ValueError("Se requieren al menos 2 observaciones para la inferencia.")
              
         print(f"Módulo de Inferencia Estadística cargado para: {self.columna}")
+    # --- Métodos de Inferencia Unimuestra ---
+    
+    def intervalo_confianza_media(self, nivel_confianza=0.95):
+        """
+        Calcula el Intervalo de Confianza (IC) para la media poblacional (mu).
+        Utiliza la distribución t de Student.
+        """
+        # Obtenemos métricas de la clase padre (DatosCuantitativos)
+        resumen = self.calcular_resumen()
+        media = resumen['Media (Promedio)']
+        desv_estandar = resumen['Desviación Estándar']
+        n = self._n
+        
+        grados_libertad = n - 1
