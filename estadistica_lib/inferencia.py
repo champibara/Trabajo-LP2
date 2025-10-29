@@ -61,7 +61,7 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Superior': limite_superior.round(4)
         }
     # ----------------------------------------------------------------------
-    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t y F)
+    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
     # ----------------------------------------------------------------------
     
     def prueba_f_varianzas(self, otra_muestra, nivel_significancia=0.05):
@@ -104,3 +104,22 @@ class InferenciaEstadistica(DatosCuantitativos):
             "Nivel_Significancia": nivel_significancia,
             "Conclusion": conclusion
         }
+    
+    def prueba_t_dos_muestras(self, otra_muestra, varianzas_iguales=True, nivel_significancia=0.05):
+        """
+        Prueba t para comparar las medias de dos muestras independientes.
+        
+        :param varianzas_iguales: True (Pooled variance) o False (Welch's t-test).
+        """
+        if not isinstance(otra_muestra, DatosBase):
+            raise TypeError("La otra_muestra debe ser una instancia de DatosBase o una clase hija.")
+
+        res1 = self.calcular_resumen()
+        res2 = otra_muestra.calcular_resumen()
+        
+        m1, m2 = res1['Media (Promedio)'], res2['Media (Promedio)']
+        s1, s2 = res1['Desviación Estándar'], res2['Desviación Estándar']
+        n1, n2 = self._n, otra_muestra.obtener_n_observaciones()
+        
+        if n1 < 2 or n2 < 2:
+            return {"Error": "Se requieren al menos 2 obs. en cada muestra para la prueba t."}   
