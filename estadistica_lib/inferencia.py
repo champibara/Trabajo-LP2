@@ -38,3 +38,23 @@ class InferenciaEstadistica(DatosCuantitativos):
         n = self._n
         
         grados_libertad = n - 1
+        
+        # Valor crítico t de Student: ppf (percent point function = inversa de la CDF)
+        t_critico = stats.t.ppf(1 - (1 - nivel_confianza) / 2, grados_libertad)
+        
+        # Error Estándar de la Media
+        error_estandar = desv_estandar / (n ** 0.5)
+        
+        # Margen de Error
+        margen_error = t_critico * error_estandar
+        
+        limite_inferior = media - margen_error
+        limite_superior = media + margen_error
+        
+        return {
+            'IC_Nivel': nivel_confianza,
+            'Media_Muestral': media,
+            'Margen_Error': margen_error,
+            'Limite_Inferior': limite_inferior.round(4),
+            'Limite_Superior': limite_superior.round(4)
+        }
