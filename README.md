@@ -41,14 +41,10 @@ Este proyecto requiere las siguientes librerías de Python. Se recomienda usar u
 ---
 Organizar la salida de resultados en directorios dedicados (tablas y graficos).
 
-¡Excelente idea! Un archivo README.md es crucial para cualquier proyecto de Git, ya que actúa como una tarjeta de presentación y una guía para otros usuarios (y para ti mismo).
-
-Aquí tienes el contenido completo y bien estructurado para tu README.md, que incorpora la descripción que ya tenías y añade secciones clave sobre la instalación, la ejecución y la estructura del proyecto.
 
 🧮 Proyecto: Análisis Estadístico de Datos Cualitativos y Cuantitativos
 📘 Descripción General
 Este proyecto implementa un sistema en Python para el análisis estadístico de datos cualitativos y cuantitativos, aplicando los principios de la Programación Orientada a Objetos (POO).
-
 El programa permite leer archivos CSV, seleccionar variables y generar automáticamente medidas estadísticas y tablas de frecuencia, guardando los resultados en archivos CSV y gráficos PNG dentro de carpetas dedicadas (tablas/ y graficos/).
 
 Su diseño modular facilita el uso de clases reutilizables y promueve la claridad del código mediante la aplicación rigurosa de conceptos de POO como:
