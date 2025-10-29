@@ -35,6 +35,7 @@ class DatosCuantitativos(DatosBase):
         mediana = self.datos.median().round(2)
         moda = self.datos.mode().tolist()
         desv_estandar = self.datos.std().round(2)
+        varianza = self.datos.var().round(2)
         
         # Se calculan los percentiles (Cuartil 1 y Cuartil 3).
         q1 = self.datos.quantile(0.25).round(2)
@@ -46,6 +47,7 @@ class DatosCuantitativos(DatosBase):
             'Mediana': mediana,
             'Moda(s)': moda,
             'Desviación Estándar': desv_estandar,
+            'Varianza': varianza,
             'Cuartil 1 (P25)': q1,
             'Cuartil 3 (P75)': q3
         }
