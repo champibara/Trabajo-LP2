@@ -20,6 +20,25 @@ Automatizar el cálculo y la generación de:
 
 📋 Tablas de frecuencia y porcentajes para datos cualitativos.
 
+  
+  
+## ✨ Características Principales
+- **Carga de Datos Flexible:** Maneja archivos **.csv** con separadores **;** o **,** y codificación ***latin -1***.
+- **Estadística Descriptiva:** 
+  -  Cálculo de medidas de tendencia central** (Media, Mediana, Moda)** y    dispersión **(Varianza, Desviación Estándar)**
+
+- **Análisis Gráfico:**
+	- Generación automática de Histogramas y Gráficos de Barras.
+
+- **Inferencia Estadística:**
+	- Soporte para Intervalos de Confianza y las pruebas de hipótesis más comunes.
+---
+## 📋 Uso e Instalación
+#### **Requisitos**
+Este proyecto requiere las siguientes librerías de Python. Se recomienda usar un entorno virtual.
+
+`pip install pandas numpy matplotlib scipy`  
+---
 Organizar la salida de resultados en directorios dedicados (tablas y graficos).
 
 ¡Excelente idea! Un archivo README.md es crucial para cualquier proyecto de Git, ya que actúa como una tarjeta de presentación y una guía para otros usuarios (y para ti mismo).
