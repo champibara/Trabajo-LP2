@@ -6,18 +6,19 @@ El programa permite leer archivos CSV, seleccionar variables y generar automáti
 Su diseño modular facilita el uso de clases reutilizables y promueve la claridad del código mediante la aplicación de conceptos como **herencia**, **encapsulamiento** y **polimorfismo**.  
 
 ## 🧠 Objetivos del Proyecto
-- Aplicar los fundamentos de la **Programación Orientada a Objetos** en Python.  
-- Implementar **clases reutilizables** para análisis estadístico.  
-- Automatizar el cálculo de:
-  - 📊 **Medidas de tendencia central** 
-  - 📈 **Medidas de dispersión**
-  - 📋 **Tablas de frecuencia y porcentajes acumulados**
- 
-  - ---
-title: "Parcial LP2 – Librería de Estadística en Python"
-output: github_document
----
+Aplicar los fundamentos de la Programación Orientada a Objetos (POO) en Python.
 
-<img src="logo.jpg" width="150" align="center" />
+Implementar clases reutilizables para análisis estadístico (cualitativo y cuantitativo).
 
----
+Automatizar el cálculo y la generación de:
+
+📊 Medidas de tendencia central (Media, Mediana, Moda).
+
+📈 Medidas de dispersión (Desviación estándar).
+
+🔢 Cuartiles/Percentiles para datos cuantitativos.
+
+📋 Tablas de frecuencia y porcentajes para datos cualitativos.
+
+Organizar la salida de resultados en directorios dedicados (tablas y graficos).
+
