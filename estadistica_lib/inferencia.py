@@ -79,6 +79,19 @@ class InferenciaEstadistica(DatosCuantitativos):
         if desv_estandar_poblacional <= 0:
             return {"Error": "La desviación estándar poblacional debe ser positiva."}
         
+        # Error estándar de la media (SEM)
+        error_estandar = desv_estandar_poblacional / np.sqrt(n)
+
+        # Estadístico Z
+        Z_stat = (media_muestral - media_hipotetica) / error_estandar
+        
+        # P-valor (prueba de dos colas)
+        p_value = 2 * (1 - stats.norm.cdf(np.abs(Z_stat)))
+        
+        conclusion = "No se rechaza H0 (No hay diferencia significativa)"
+        if p_value < nivel_significancia:
+            conclusion = "Se rechaza H0 (Existe diferencia significativa)"
+    
     # ----------------------------------------------------------------------
     # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
     # ----------------------------------------------------------------------
