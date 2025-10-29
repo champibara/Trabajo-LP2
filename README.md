@@ -12,3 +12,12 @@ Su diseño modular facilita el uso de clases reutilizables y promueve la clarida
   - 📊 **Medidas de tendencia central** 
   - 📈 **Medidas de dispersión**
   - 📋 **Tablas de frecuencia y porcentajes acumulados**
+ 
+  - ---
+title: "Parcial LP2 – Librería de Estadística en Python"
+output: github_document
+---
+
+<img src="logo.jpg" width="150" align="center" />
+
+---
