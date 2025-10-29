@@ -61,7 +61,7 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Superior': limite_superior.round(4)
         }
     # ----------------------------------------------------------------------
-    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t y F)
+    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
     # ----------------------------------------------------------------------
     
     def prueba_f_varianzas(self, otra_muestra, nivel_significancia=0.05):
@@ -103,4 +103,4 @@ class InferenciaEstadistica(DatosCuantitativos):
             "P_Valor": p_value.round(4),
             "Nivel_Significancia": nivel_significancia,
             "Conclusion": conclusion
-        }
+        }   
