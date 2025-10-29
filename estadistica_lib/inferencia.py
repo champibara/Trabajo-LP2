@@ -39,6 +39,9 @@ class InferenciaEstadistica(DatosCuantitativos):
         desv_estandar = resumen['Desviación Estándar']
         n = self._n
         
+        if n < 2:
+             return {"Error": "Se requieren al menos 2 observaciones para el IC."}
+        
         grados_libertad = n - 1
 
         # Valor crítico t de Student: ppf (percent point function = inversa de la CDF)
