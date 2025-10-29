@@ -63,6 +63,22 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Inferior': limite_inferior.round(4),
             'Limite_Superior': limite_superior.round(4)
         }
+    def prueba_z_media_poblacional(self, media_hipotetica, desv_estandar_poblacional, nivel_significancia=0.05):
+        """
+        Prueba Z para la media poblacional (μ), asumiendo que la desviación 
+        estándar poblacional (σ) es conocida.
+        
+        H0: μ = μ0; Ha: μ ≠ μ0
+        """
+        resumen = self.calcular_resumen()
+        media_muestral = resumen['Media (Promedio)']
+        n = self._n
+
+        if n < 1:
+            return {"Error": "Se requiere al menos 1 observación."}
+        if desv_estandar_poblacional <= 0:
+            return {"Error": "La desviación estándar poblacional debe ser positiva."}
+        
     # ----------------------------------------------------------------------
     # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
     # ----------------------------------------------------------------------
