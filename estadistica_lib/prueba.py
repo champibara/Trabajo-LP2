@@ -1,50 +1,80 @@
-import pandas as pd
-from estadistica_lib.cualitativos import DatosCualitativos
+# estadistica_lib/prueba.py
 
-def detectar_separador(ruta):
-    """Detecta automáticamente el separador del archivo CSV."""
-    with open(ruta, 'r', encoding='utf-8') as f:
-        primera_linea = f.readline()
-        if ';' in primera_linea:
-            return ';'
-        elif ',' in primera_linea:
-            return ','
-        else:
-            return ','  # por defecto
+# Se importa la funcionalidad de manejo de archivos.
+import os 
+# Se importa la librería para manejo de datos.
+import pandas as pd
+# Se importan las Clases Hijas para la ejecución de la lógica.
+from estadistica_lib.cualitativos import DatosCualitativos
+from estadistica_lib.cuantitativos import DatosCuantitativos
+
+# 1. CONSTANTES DE CONFIGURACIÓN Y RUTA
+# Se corrige la ruta para la ejecución como módulo (desde la raíz del proyecto).
+RUTA_DATASET = 'datasets/Alumnos Matriculados 2025-II-UNALM.csv'
+DIR_TABLAS = 'tablas'
+DIR_GRAFICOS = 'graficos'
+
+def crear_directorios():
+    """Se verifica y se crean los directorios de salida (tablas y graficos) si no existen."""
+    # Se utiliza os.makedirs con exist_ok=True para crear directorios sin error si ya existen.
+    for d in [DIR_TABLAS, DIR_GRAFICOS]:
+        os.makedirs(d, exist_ok=True)
+    print("Directorios de salida verificados/creados.")
+
 
 def main():
-    # Ruta al archivo CSV real
-    ruta = "../datasets/Alumnos Matriculados 2025-II-UNALM.csv"
-
-    # Detectar separador automáticamente
-    sep = detectar_separador(ruta)
-    print(f"Separador detectado: '{sep}'")
-
-    # Mostrar las columnas disponibles para elegir
-    df = pd.read_csv(ruta, sep=sep, nrows=3)
-    print("\nColumnas detectadas en el archivo:")
-    for col in df.columns:
-        print("-", col)
-
-    # Pedir al usuario cuál columna cualitativa desea analizar
-    columna = input("\n👉 Ingresa el nombre de la columna cualitativa que quieres analizar: ")
+    
+    # Se llama a la función para asegurar que las carpetas de salida existan.
+    crear_directorios() 
+    print("--- TAREA LP2: Estadística con POO ---")
+    
+    # ----------------------------------------------------
+    # 1. PRUEBA CON DATOS CUALITATIVOS
+    # NOTA: Ajusta la columna si es diferente en tu CSV.
+    columna_cualitativa = 'Sexo' 
 
     try:
-        analisis = DatosCualitativos(ruta, columna, separador=sep)
-        resumen = analisis.resumen()
+        # Se crea el objeto de la clase hija (Herencia).
+        datos_cual = DatosCualitativos(RUTA_DATASET, columna_cualitativa)
+        datos_cual.mostrar_info()
+        
+        # Se llama a los métodos para guardar resultados.
+        datos_cual.guardar_tabla_frecuencias("tabla_frecuencias_cualitativas.csv")
+        datos_cual.generar_y_guardar_grafico("grafico_barras_cualitativas.png")
+        
+        # Se muestra la moda por consola.
+        moda = datos_cual.calcular_moda()
+        print(f"\nModa(s) de {columna_cualitativa}: {moda}")
 
-        print("\n---- RESUMEN DE DATOS CUALITATIVOS ----")
-        print(f"Variable: {resumen['Variable']}")
-        print(f"Tipo: {resumen['Tipo de Dato']}")
-        print(f"Observaciones válidas: {resumen['Observaciones Válidas']}")
-        print(f"Moda: {resumen['Moda']}")
-
-        print("\nTabla de frecuencias:")
-        tabla = pd.DataFrame(resumen["Tabla de Frecuencias"])
-        print(tabla.to_string(index=False))
 
     except Exception as e:
-        print(f"\n⚠️ Error: {e}")
+        print(f"\n[ERROR al procesar Cualitativos]: {e}")
 
-if __name__ == "__main__":
+    # ----------------------------------------------------
+    # 2. PRUEBA CON DATOS CUANTITATIVOS
+    # NOTA: Ajusta la columna si es diferente en tu CSV.
+    columna_cuantitativa = 'Edad' 
+
+    try:
+        # Se crea el objeto de la clase hija (Herencia).
+        datos_cuant = DatosCuantitativos(RUTA_DATASET, columna_cuantitativa)
+        datos_cuant.mostrar_info()
+        
+        # Se llama a los métodos para guardar resultados.
+        datos_cuant.guardar_resumen_estadistico("resumen_cuantitativo.csv")
+        datos_cuant.generar_y_guardar_histograma("histograma_cuantitativo.png")
+        
+        # Se muestra el resumen por consola.
+        resumen = datos_cuant.calcular_resumen()
+        print("\nResumen Estadístico Cuantitativo:")
+        for k, v in resumen.items():
+            print(f"- {k}: {v}")
+            
+    except Exception as e:
+        print(f"\n[ERROR al procesar Cuantitativos]: {e}")
+        
+    print("\n--- Tarea completada exitosamente ---")
+
+
+if __name__ == '__main__':
     main()
