@@ -1,4 +1,4 @@
-# estadistica_lib/base.py
+
 import pandas as pd
 
 class DatosBase:
