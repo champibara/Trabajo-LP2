@@ -25,7 +25,7 @@ Automatizar el cálculo y la generación de:
 ## ✨ Características Principales
 - **Carga de Datos Flexible:** Maneja archivos **.csv** con separadores **;** o **,** y codificación ***latin -1***.
 - **Estadística Descriptiva:** 
-  -  Cálculo de medidas de tendencia central** (Media, Mediana, Moda)** y    dispersión **(Varianza, Desviación Estándar)**
+  -  Cálculo de medidas de tendencia central **(Media, Mediana, Moda)** y    dispersión **(Varianza, Desviación Estándar)**
 
 - **Análisis Gráfico:**
 	- Generación automática de Histogramas y Gráficos de Barras.
