@@ -3,3 +3,6 @@ pandas
 
 # Librería esencial para la generación de gráficos (barras, histogramas)
 matplotlib
+
+#Librería escencial para realizar la inferencia estadística (pruebas Z, t, F)
+scipy
