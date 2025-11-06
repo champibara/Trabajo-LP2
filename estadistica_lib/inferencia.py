@@ -1,58 +1,38 @@
-# Importamos los paquetes y la clase padre a utilizar
-from .cuantitativos import DatosCuantitativos # Clase de la que hereda
-from .base import DatosBase # Clase Base (necesaria para type hints)
-from .cuantitativos import DIR_TABLAS # Se reutiliza la constante
+from .cuantitativos import DatosCuantitativos
+from .base import DatosBase
 
 from scipy import stats
 import numpy as np
 import pandas as pd
 import os
-
-# Se reutilizan las constantes definidas en cuantitativos.py
 from .cuantitativos import DIR_TABLAS
 
 class InferenciaEstadistica(DatosCuantitativos):
-    """
-    Clase para realizar pruebas de hipótesis (t, F) e Intervalos de Confianza (IC)
-    para datos cuantitativos. Hereda los cálculos descriptivos de DatosCuantitativos.
-    """
     
     def __init__(self, ruta_archivo, columna_interes):
-        """Inicializa la clase llamando al constructor de DatosCuantitativos."""
         super().__init__(ruta_archivo, columna_interes)
         self._n = len(self.datos)
         
         if self._n < 2:
-             raise ValueError("Se requieren al menos 2 observaciones para la inferencia.")
-             
+            raise ValueError("Se requieren al menos 2 observaciones para la inferencia.")
+            
         print(f"Módulo de Inferencia Estadística cargado para: {self.columna}")
-    # ----------------------------------------------------------------------
-    # 1. INFERENCIA UNIMUESTRA: Intervalo de Confianza para la Media
-    # ----------------------------------------------------------------------
-    
+
     def intervalo_confianza_media(self, nivel_confianza=0.95):
-        """
-        Calcula el Intervalo de Confianza (IC) para la media poblacional (mu).
-        Utiliza la distribución t de Student.
-        """
-        # Obtenemos métricas de la clase padre (DatosCuantitativos)
         resumen = self.calcular_resumen()
         media = resumen['Media (Promedio)']
         desv_estandar = resumen['Desviación Estándar']
         n = self._n
         
         if n < 2:
-             return {"Error": "Se requieren al menos 2 observaciones para el IC."}
+            return {"Error": "Se requieren al menos 2 observaciones para el IC."}
         
         grados_libertad = n - 1
 
-        # Valor crítico t de Student: ppf (percent point function = inversa de la CDF)
         t_critico = stats.t.ppf(1 - (1 - nivel_confianza) / 2, grados_libertad)
         
-        # Error Estándar de la Media
         error_estandar = desv_estandar / (n ** 0.5)
         
-        # Margen de Error
         margen_error = t_critico * error_estandar
         
         limite_inferior = media - margen_error
@@ -65,13 +45,8 @@ class InferenciaEstadistica(DatosCuantitativos):
             'Limite_Inferior': limite_inferior.round(4),
             'Limite_Superior': limite_superior.round(4)
         }
-    def prueba_z_media_poblacional(self, media_hipotetica, desv_estandar_poblacional, nivel_significancia=0.05):
-        """
-        Prueba Z para la media poblacional (μ), asumiendo que la desviación 
-        estándar poblacional (σ) es conocida.
         
-        H0: μ = μ0; Ha: μ ≠ μ0
-        """
+    def prueba_z_media_poblacional(self, media_hipotetica, desv_estandar_poblacional, nivel_significancia=0.05):
         resumen = self.calcular_resumen()
         media_muestral = resumen['Media (Promedio)']
         n = self._n
@@ -81,13 +56,10 @@ class InferenciaEstadistica(DatosCuantitativos):
         if desv_estandar_poblacional <= 0:
             return {"Error": "La desviación estándar poblacional debe ser positiva."}
         
-        # Error estándar de la media (SEM)
         error_estandar = desv_estandar_poblacional / np.sqrt(n)
 
-        # Estadístico Z
         Z_stat = (media_muestral - media_hipotetica) / error_estandar
         
-        # P-valor (prueba de dos colas)
         p_value = 2 * (1 - stats.norm.cdf(np.abs(Z_stat)))
         
         conclusion = "No se rechaza H0 (No hay diferencia significativa)"
@@ -97,101 +69,6 @@ class InferenciaEstadistica(DatosCuantitativos):
             "Prueba": "Prueba Z para la Media (σ conocido)",
             "Z_Estadístico": Z_stat.round(4),
             "Media_Hipotética (μ0)": media_hipotetica,
-            "P_Valor": p_value.round(4),
-            "Conclusion": conclusion
-        }
-    # ----------------------------------------------------------------------
-    # 2. PRUEBAS DE HIPÓTESIS: Dos Muestras (t student y F estadístico)
-    # ----------------------------------------------------------------------
-    
-    def prueba_f_varianzas(self, otra_muestra, nivel_significancia=0.05):
-        """
-        Prueba F para comparar si dos muestras provienen de poblaciones 
-        con varianzas iguales (Homocedasticidad).
-        """
-        if not isinstance(otra_muestra, DatosBase):
-            raise TypeError("La otra_muestra debe ser una instancia de DatosBase o una clase hija.")
-        
-        # Acceso directo a las varianzas del resumen (ya agregada en DatosCuantitativos)
-        var1 = self.calcular_resumen()['Varianza']
-        var2 = otra_muestra.calcular_resumen()['Varianza']
-            
-        n1 = self._n
-        n2 = otra_muestra.obtener_n_observaciones()
-            
-        if n1 < 2 or n2 < 2:
-            return {"Error": "Se requieren al menos 2 obs. en cada muestra para varianza."}
-            
-        # Estadístico F (mayor varianza en el numerador)
-        if var1 >= var2:
-            F_stat = var1 / var2
-            df1, df2 = n1 - 1, n2 - 1
-        else:
-            F_stat = var2 / var1
-            df1, df2 = n2 - 1, n1 - 1
-        
-        # P-valor (prueba de dos colas: 2 * (1 - cdf))
-        p_value = 2 * (1 - stats.f.cdf(F_stat, df1, df2))
-        
-        conclusion = "No se rechaza H0 (Varianzas Iguales)"
-        if p_value < nivel_significancia:
-            conclusion = "Se rechaza H0 (Varianzas Diferentes)"
-
-        return {
-            "Prueba": "Prueba F de Varianzas",
-            "F_Estadístico": F_stat.round(4),
-            "P_Valor": p_value.round(4),
-            "Nivel_Significancia": nivel_significancia,
-            "Conclusion": conclusion
-        }
-    
-    def prueba_t_dos_muestras(self, otra_muestra, varianzas_iguales=True, nivel_significancia=0.05):
-        """
-        Prueba t para comparar las medias de dos muestras independientes.
-        
-        :param varianzas_iguales: True (Pooled variance) o False (Welch's t-test).
-        """
-        if not isinstance(otra_muestra, DatosBase):
-            raise TypeError("La otra_muestra debe ser una instancia de DatosBase o una clase hija.")
-
-        res1 = self.calcular_resumen()
-        res2 = otra_muestra.calcular_resumen()
-        
-        m1, m2 = res1['Media (Promedio)'], res2['Media (Promedio)']
-        s1, s2 = res1['Desviación Estándar'], res2['Desviación Estándar']
-        n1, n2 = self._n, otra_muestra.obtener_n_observaciones()
-        
-        if n1 < 2 or n2 < 2:
-            return {"Error": "Se requieren al menos 2 obs. en cada muestra para la prueba t."}
-        
-        # Cálculo del Estadístico y Grados de Libertad (df)
-        if varianzas_iguales:
-            # PRUEBA T CON VARIANZAS IGUALES (Pooled)
-            var_pool = (((n1 - 1) * s1**2) + ((n2 - 1) * s2**2)) / (n1 + n2 - 2)
-            error_estandar = np.sqrt(var_pool * (1/n1 + 1/n2))
-            df = n1 + n2 - 2
-        else:
-            # PRUEBA T CON VARIANZAS DIFERENTES (Welch)
-            error_estandar = np.sqrt((s1**2 / n1) + (s2**2 / n2))
-            
-            # Grados de libertad (fórmula de Welch-Satterthwaite)
-            num = (s1**2 / n1 + s2**2 / n2)**2
-            den = ((s1**2 / n1)**2 / (n1 - 1)) + ((s2**2 / n2)**2 / (n2 - 1))
-            df = num / den
-        # Estadístico t
-        T_stat = (m1 - m2) / error_estandar
-        
-        # P-valor (prueba de dos colas)
-        p_value = 2 * (1 - stats.t.cdf(np.abs(T_stat), df))
-        
-        conclusion = "No se rechaza H0 (Medias Iguales)"
-        if p_value < nivel_significancia:
-            conclusion = "Se rechaza H0 (Medias Diferentes)"
-
-        return {
-            "Prueba": f"Prueba t ({'Pooled' if varianzas_iguales else 'Welch'})",
-            "T_Estadístico": T_stat.round(4),
-            "Grados_Libertad": df.round(2),
             "P_Valor": p_value.round(4),
             "Conclusion": conclusion
         }
