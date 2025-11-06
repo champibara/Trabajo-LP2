@@ -1,11 +1,13 @@
 # Importamos los paquetes y la clase padre a utilizar
+from .cuantitativos import DatosCuantitativos # Clase de la que hereda
+from .base import DatosBase # Clase Base (necesaria para type hints)
+from .cuantitativos import DIR_TABLAS # Se reutiliza la constante
 
-from .cuantitativos import DatosCuantitativos # Se importa la clase padre
-from .base import DatosBase # Se importa la base
-from scipy import stats 
+from scipy import stats
 import numpy as np
 import pandas as pd
-import os 
+import os
+
 # Se reutilizan las constantes definidas en cuantitativos.py
 from .cuantitativos import DIR_TABLAS
 
