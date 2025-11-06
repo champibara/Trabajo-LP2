@@ -1,22 +1,21 @@
-# estadistica_lib/prueba.py
+# estadistica_lib/prueba.py (Código completo y final)
 
 # Se importa la funcionalidad de manejo de archivos.
-import os 
+import os
 # Se importa la librería para manejo de datos.
 import pandas as pd
 # Se importan las Clases Hijas para la ejecución de la lógica.
 from estadistica_lib.cualitativos import DatosCualitativos
 from estadistica_lib.cuantitativos import DatosCuantitativos
+from estadistica_lib.inferencia import InferenciaEstadistica # <-- Importación clave
 
 # 1. CONSTANTES DE CONFIGURACIÓN Y RUTA
-# Se corrige la ruta para la ejecución como módulo (desde la raíz del proyecto).
 RUTA_DATASET = 'datasets/Alumnos Matriculados 2025-II-UNALM.csv'
 DIR_TABLAS = 'tablas'
 DIR_GRAFICOS = 'graficos'
 
 def crear_directorios():
     """Se verifica y se crean los directorios de salida (tablas y graficos) si no existen."""
-    # Se utiliza os.makedirs con exist_ok=True para crear directorios sin error si ya existen.
     for d in [DIR_TABLAS, DIR_GRAFICOS]:
         os.makedirs(d, exist_ok=True)
     print("Directorios de salida verificados/creados.")
@@ -24,25 +23,20 @@ def crear_directorios():
 
 def main():
     
-    # Se llama a la función para asegurar que las carpetas de salida existan.
     crear_directorios() 
     print("--- TAREA LP2: Estadística con POO ---")
     
     # ----------------------------------------------------
     # 1. PRUEBA CON DATOS CUALITATIVOS
-    # Se usa 'FACULTAD' como la columna de datos cualitativos (CORREGIDO)
     columna_cualitativa = 'FACULTAD' 
 
     try:
-        # Se crea el objeto de la clase hija (Herencia).
         datos_cual = DatosCualitativos(RUTA_DATASET, columna_cualitativa)
         datos_cual.mostrar_info()
         
-        # Se llama a los métodos para guardar resultados.
         datos_cual.guardar_tabla_frecuencias("tabla_frecuencias_cualitativas.csv")
         datos_cual.generar_y_guardar_grafico("grafico_barras_cualitativas.png")
         
-        # Se muestra la moda por consola.
         moda = datos_cual.calcular_moda()
         print(f"\nModa(s) de {columna_cualitativa}: {moda}")
 
@@ -51,19 +45,15 @@ def main():
 
     # ----------------------------------------------------
     # 2. PRUEBA CON DATOS CUANTITATIVOS
-    # Se usa 'NRO_MATRICULADOS' como la columna de datos cuantitativos (CORREGIDO)
     columna_cuantitativa = 'NRO_MATRICULADOS' 
 
     try:
-        # Se crea el objeto de la clase hija (Herencia).
         datos_cuant = DatosCuantitativos(RUTA_DATASET, columna_cuantitativa)
         datos_cuant.mostrar_info()
         
-        # Se llama a los métodos para guardar resultados.
         datos_cuant.guardar_resumen_estadistico("resumen_cuantitativo.csv")
         datos_cuant.generar_y_guardar_histograma("histograma_cuantitativo.png")
         
-        # Se muestra el resumen por consola.
         resumen = datos_cuant.calcular_resumen()
         print("\nResumen Estadístico Cuantitativo:")
         for k, v in resumen.items():
@@ -72,6 +62,33 @@ def main():
     except Exception as e:
         print(f"\n[ERROR al procesar Cuantitativos]: {e}")
         
+    # ----------------------------------------------------
+    # 3. PRUEBA CON DATOS INFERENCIALES
+    # ----------------------------------------------------
+    columna_inferencia = 'NRO_MATRICULADOS'
+    # NOTA: Usamos los valores calculados de la muestra para la prueba Z, solo para demostrar el código.
+    media_hipotetica = 57.77
+    desv_conocida = 105.68     
+    
+    try:
+        # Se crea el objeto de inferencia (Hereda de Cuantitativos)
+        datos_inf = InferenciaEstadistica(RUTA_DATASET, columna_inferencia)
+        
+        # --- 3.1 INTERVALO DE CONFIANZA ---
+        ic = datos_inf.intervalo_confianza_media(nivel_confianza=0.90)
+        print("\n--- Intervalo de Confianza (90%) para la Media (μ) ---")
+        print(f"IC: [{ic['Limite_Inferior']} ; {ic['Limite_Superior']}]")
+
+        # --- 3.2 PRUEBA Z UNIMUESTRA ---
+        prueba_z = datos_inf.prueba_z_media_poblacional(media_hipotetica, desv_conocida)
+        print("\n--- Prueba Z Unimuestra ---")
+        print(f"Estadístico Z: {prueba_z['Z_Estadístico']} | P-Valor: {prueba_z['P_Valor']}")
+        print(f"Conclusión: {prueba_z['Conclusion']}")
+        
+    except Exception as e:
+        print(f"\n[ERROR al procesar Inferencia]: {e}")
+    
+
     print("\n--- Tarea completada exitosamente ---")
 
 
