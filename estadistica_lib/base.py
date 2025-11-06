@@ -30,3 +30,7 @@ class DatosBase:
         print(f"\n--- Información de la Columna: {self.columna} ---")
         print(f"Tipo de dato: {self.datos.dtype}")
         print(f"Número total de registros (sin NaNs): {len(self.datos)}")
+  
+    def obtener_n_observaciones(self):
+        """Devuelve el número de observaciones no nulas."""
+        return len(self.datos)
