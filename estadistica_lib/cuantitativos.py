@@ -27,13 +27,14 @@ class DatosCuantitativos(DatosBase):
         print(f"Datos Cuantitativos cargados para: {self.columna}")
 
 
+# estadistica_lib/cuantitativos.py (FUNCIÓN CORREGIDA)
+
     def calcular_resumen(self):
-        """Calcula las estadísticas básicas: media, mediana, moda, desv. estándar y cuartiles."""
+        """Calcula las estadísticas básicas: media, mediana, desv. estándar y cuartiles."""
         
         # Se calculan las medidas de tendencia central y dispersión.
         media = self.datos.mean().round(2)
         mediana = self.datos.median().round(2)
-        moda = self.datos.mode().tolist()
         desv_estandar = self.datos.std().round(2)
         varianza = self.datos.var().round(2)
         
@@ -45,7 +46,7 @@ class DatosCuantitativos(DatosBase):
         resumen = {
             'Media (Promedio)': media,
             'Mediana': mediana,
-            'Moda(s)': moda,
+            # --- ELIMINADA: 'Moda(s)': moda, ---
             'Desviación Estándar': desv_estandar,
             'Varianza': varianza,
             'Cuartil 1 (P25)': q1,
